@@ -41,7 +41,7 @@ EOT
         $fromName = $input->getArgument('fromName');
         $message = $input->getArgument('message');
     	
-    	$sender = $this->getContainer()->get('jhg_nexmo_sms.sms.sender');
+    	$sender = $this->getContainer()->get('jhg_nexmo.sms.sender');
     	
     	if($sender->send($number,$fromName,$message,null,0)) {
 	        $output->writeln(sprintf('SMS send to %u from %s: "%s"',$number,$fromName,$message));
