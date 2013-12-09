@@ -1,4 +1,7 @@
 nexmo-bundle
 ============
+Integrates Nexmo libs in Symfony2
 
-Integrates Nexmo libs in Symfon2
+Reference
+---------
+https://docs.nexmo.com/index.php/messaging-sms-api/send-message

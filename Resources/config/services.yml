@@ -1,0 +1,6 @@
+parameters:
+
+services:
+    jhg_nexmo.sms.sender:
+        class: Jhg\NexmoBundle\Sender\SmsSender
+        arguments: [@service_container]
