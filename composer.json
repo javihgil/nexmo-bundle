@@ -24,5 +24,7 @@
         "psr-0": {
             "Jhg\\NexmoBundle": ""
         }
-    }
+    },
+    
+    "target-dir": "Jhg/NexmoBundle"
 }
