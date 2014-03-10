@@ -1,6 +1,10 @@
 parameters:
 
 services:
+    jhg_nexmo.sms_message:
+        class: Nexmo\NexmoMessage
+        arguments: ["%jhg_nexmo.api_key%","%jhg_nexmo.api_secret%"]
+
     jhg_nexmo.sms.sender:
         class: Jhg\NexmoBundle\Sender\SmsSender
-        arguments: [@service_container]
+        arguments: [@service_container,@jhg_nexmo.sms_message]
