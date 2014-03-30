@@ -5,7 +5,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
  * Bundle.
- * @author Javi Hernández Gil <bilbo@deverbena.com>
+ * @author Javi Hernández
  */
 class JhgNexmoBundle extends Bundle
 {

@@ -20,16 +20,28 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('jhg_nexmo');
 
-        // Here you should define the parameters that are allowed to
-        // configure your bundle. See the documentation linked above for
-        // more information on that topic.
-
         $rootNode
         	->children()
-	        	->scalarNode('api_key')->end()
-	        	->scalarNode('api_secret')->end()
-	        	->scalarNode('from_name')->end()
-	        	->booleanNode('disable_delivery')->end()
+	        	->scalarNode('api_key')
+                    ->isRequired()
+                ->end()
+
+	        	->scalarNode('api_secret')
+                    ->isRequired()
+                ->end()
+
+	        	->scalarNode('from_name')
+                    ->validate()
+                        ->ifTrue(function ($s) {
+                            return (strlen($s)>11 || strlen($s)<2) && preg_match('/^[0-9a-z]{11}$/i', $s) !== 1;
+                        })
+                            ->thenInvalid('Invalid from_name, only alphanumeric characters are allowed')
+                        ->end()
+                ->end()
+
+	        	->booleanNode('disable_delivery')
+                    ->defaultFalse()
+                ->end()
         	->end()
         ;
         

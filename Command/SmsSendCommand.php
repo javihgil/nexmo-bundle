@@ -8,15 +8,14 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * @author Javi Hernández Gil <bilbo@deverbena.com>
+ * @author Javi Hernández
  */
 class SmsSendCommand extends ContainerAwareCommand
 {
     /**
      * @see Command
      */
-    protected function configure()
-    {
+    protected function configure() {
         $this
             ->setName('nexmo:sms:send')
             ->setDescription('Send a SMS message')
@@ -24,10 +23,11 @@ class SmsSendCommand extends ContainerAwareCommand
                 new InputArgument('number', InputArgument::REQUIRED, 'The number'),
                 new InputArgument('fromName', InputArgument::REQUIRED, 'The name shown as origin'),
                 new InputArgument('message', InputArgument::REQUIRED, 'The message'),
+                new InputOption('report','r',InputOption::VALUE_OPTIONAL,'Ask for status report'),
             ))
             ->setHelp(<<<EOT
 The <info>nexmo:sms:send</info> command sends a SMS message through Nexmo API
-  <info>php app/console nexmo:sms:send +34666555444 MyApp "Hello World!!"</info>
+<info>php app/console nexmo:sms:send +34666555444 MyApp "Hello World!!"</info>
 EOT
             );
     }
@@ -35,18 +35,23 @@ EOT
     /**
      * @see Command
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
+    protected function execute(InputInterface $input, OutputInterface $output) {
         $number = $input->getArgument('number');
         $fromName = $input->getArgument('fromName');
         $message = $input->getArgument('message');
-    	
-    	$sender = $this->getContainer()->get('jhg_nexmo.sms.sender');
-    	
-    	if($sender->send($number,$fromName,$message,null,0)) {
-	        $output->writeln(sprintf('SMS send to %u from %s: "%s"',$number,$fromName,$message));
+        $report = (int)$input->getOption('report');
+
+    	$smsManager = $this->getContainer()->get('jhg_nexmo_sms');
+
+    	if($response = $smsManager->sendText($number,$message,$fromName,$report)) {
+	        $output->writeln(sprintf('SMS send to %s from %s: "%s"',$number,$fromName,$message));
+	        $output->writeln(sprintf('   message id: %s',$response->getMessageId()));
+	        $output->writeln(sprintf('   status: %s',$response->getStatus()));
+            $output->writeln(sprintf('   message price: %f',$response->getMessagePrice()));
+	        $output->writeln(sprintf('   remaining balance: %f',$response->getRemainingBalance()));
+	        $output->writeln(sprintf('   network: %u',$response->getNetwork()));
     	} else {
-    		$output->writeln(sprintf('There was an error sending SMS to %u from %s: "%s"',$number,$fromName,$message));
+    		$output->writeln(sprintf('There was an error sending SMS to %s from %s: "%s"',$number,$fromName,$message));
     	}
     }
     
