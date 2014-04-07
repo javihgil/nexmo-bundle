@@ -1,6 +1,8 @@
 <?php
 namespace Jhg\NexmoBundle\NexmoClient;
 
+use Jhg\NexmoBundle\NexmoClient\Exceptions\UnroutableSmsMessageException;
+
 class NexmoClient {
 
     /**
@@ -99,7 +101,13 @@ class NexmoClient {
         $response = $this->jsonRequest('/sms/json',$params);
 
         if((int)$response['messages'][0]['status']!=0) {
-            throw new \Exception($response['messages'][0]['error-text']);
+            switch((int)$response['messages'][0]['status']) {
+                case 6:
+                    throw new UnroutableSmsMessageException();
+
+                default:
+                    throw new \Exception($response['messages'][0]['error-text']);
+            }
         }
 
         return $response['messages'][0];

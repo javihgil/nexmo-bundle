@@ -36,7 +36,7 @@ class SmsManager
      * @param string $message
      * @param null|string $fromName
      * @param int $status_report_req
-     * @return mixed
+     * @return SmsSendResponse
      */
     public function sendText($number,$message,$fromName=null,$status_report_req=0) {
         $fromName = $fromName!==null ? $fromName : $this->defaultFromName;
