@@ -3,6 +3,7 @@ namespace Jhg\NexmoBundle\NexmoClient;
 
 use Jhg\NexmoBundle\NexmoClient\Exceptions\QuotaExcededException;
 use Jhg\NexmoBundle\NexmoClient\Exceptions\UnroutableSmsMessageException;
+use Psr\Log\LoggerInterface;
 
 class NexmoClient {
 
@@ -37,19 +38,26 @@ class NexmoClient {
     protected $disable_delivery;
 
     /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
      * @param $api_key
      * @param $api_secret
      * @param string $api_method GET|POST configured in Nexmo API preferences
      * @param string $delivery_phone
      * @param boolean $disable_delivery
+     * @param LoggerInterface $logger
      */
-    public function __construct($api_key,$api_secret,$api_method='GET',$delivery_phone,$disable_delivery=false) {
+    public function __construct($api_key,$api_secret,$api_method='GET',$delivery_phone,$disable_delivery=false,LoggerInterface $logger) {
         $this->rest_url = 'https://rest.nexmo.com';
         $this->api_key = $api_key;
         $this->api_secret = $api_secret;
         $this->api_method = $api_method;
         $this->delivery_phone = $delivery_phone;
         $this->disable_delivery = $disable_delivery;
+        $this->logger = $logger;
     }
 
     /**
@@ -107,9 +115,13 @@ class NexmoClient {
      * @throws \Exception
      */
     public function sendTextMessage($fromName,$toNumber,$text,$status_report_req=0) {
+        $this->logger->debug("Nexmo sendTextMessage from $fromName to $toNumber with text '$text'");
+
         // delivery phone for development
         if($this->delivery_phone) {
             $toNumber = $this->delivery_phone;
+
+            $this->logger->debug("Nexmo sendTextMessage delivery to $toNumber");
         }
 
         $params = array(
@@ -120,6 +132,7 @@ class NexmoClient {
         );
 
         if($this->disable_delivery) {
+            $this->logger->debug("Nexmo sendTextMessage delivery disabled by config");
             return null;
         }
 
