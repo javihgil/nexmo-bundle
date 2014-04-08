@@ -6,6 +6,6 @@ namespace Jhg\NexmoBundle\NexmoClient\Exceptions;
  * @package Jhg\NexmoBundle\NexmoClient\Exceptions
  * @author Javi Hernández
  */
-class UnroutableSmsMessageException extends \Exception {
+class UnroutableSmsMessageException extends NexmoClientException {
 
 } 

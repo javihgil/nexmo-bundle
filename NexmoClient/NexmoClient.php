@@ -1,6 +1,7 @@
 <?php
 namespace Jhg\NexmoBundle\NexmoClient;
 
+use Jhg\NexmoBundle\NexmoClient\Exceptions\NexmoClientException;
 use Jhg\NexmoBundle\NexmoClient\Exceptions\QuotaExcededException;
 use Jhg\NexmoBundle\NexmoClient\Exceptions\UnroutableSmsMessageException;
 use Psr\Log\LoggerInterface;
@@ -133,21 +134,30 @@ class NexmoClient {
 
         if($this->disable_delivery) {
             $this->logger->debug("Nexmo sendTextMessage delivery disabled by config");
-            return null;
+            return array(
+                "status" => "0",
+                "message-id" => "delivery-disabled",
+                "to" => $toNumber,
+                "client-ref" => 0,
+                "remaining-balance" => 0,
+                "message-price" => 0,
+                "network" => 0,
+            );
         }
 
         $response = $this->jsonRequest('/sms/json',$params);
 
-        if((int)$response['messages'][0]['status']!=0) {
-            switch((int)$response['messages'][0]['status']) {
+        if(0 !==  $code = (int)$response['messages'][0]['status']) {
+            $error = $response['messages'][0]['error-text'];
+            switch( $code) {
                 case 6:
-                    throw new UnroutableSmsMessageException();
+                    throw new UnroutableSmsMessageException($error, $code);
 
                 case 9:
-                    throw new QuotaExcededException();
+                    throw new QuotaExcededException($error, $code);
 
                 default:
-                    throw new \Exception($response['messages'][0]['error-text'],(int)$response['messages'][0]['status']);
+                    throw new NexmoClientException($error, $code);
             }
         }
 

@@ -2,10 +2,10 @@
 namespace Jhg\NexmoBundle\NexmoClient\Exceptions;
 
 /**
- * Class QuotaExcededException
+ * Class NexmoClientException
  * @package Jhg\NexmoBundle\NexmoClient\Exceptions
  * @author Javi Hernández <javibilboweb@gmail.com>
  */
-class QuotaExcededException extends NexmoClientException {
+class NexmoClientException extends \Exception {
 
 } 
