@@ -1,6 +1,7 @@
 <?php
 namespace Jhg\NexmoBundle\NexmoClient;
 
+use Jhg\NexmoBundle\NexmoClient\Exceptions\QuotaExcededException;
 use Jhg\NexmoBundle\NexmoClient\Exceptions\UnroutableSmsMessageException;
 
 class NexmoClient {
@@ -105,8 +106,11 @@ class NexmoClient {
                 case 6:
                     throw new UnroutableSmsMessageException();
 
+                case 9:
+                    throw new QuotaExcededException();
+
                 default:
-                    throw new \Exception($response['messages'][0]['error-text']);
+                    throw new \Exception($response['messages'][0]['error-text'],(int)$response['messages'][0]['status']);
             }
         }
 
