@@ -1,7 +1,7 @@
 services:
     jhg_nexmo_client:
         class: Jhg\NexmoBundle\NexmoClient\NexmoClient
-        arguments: ["%jhg_nexmo.api_key%","%jhg_nexmo.api_secret%"]
+        arguments: ["%jhg_nexmo.api_key%","%jhg_nexmo.api_secret%","%jhg_nexmo.api_method%","%jhg_nexmo.delivery_phone%"]
 
     jhg_nexmo_account:
         class: Jhg\NexmoBundle\Managers\AccountManager

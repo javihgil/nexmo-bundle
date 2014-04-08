@@ -30,6 +30,11 @@ class Configuration implements ConfigurationInterface
                     ->isRequired()
                 ->end()
 
+                ->enumNode('api_method')
+                    ->defaultValue('GET')
+                    ->values(array('GET','POST'))
+                ->end()
+
 	        	->scalarNode('from_name')
                     ->validate()
                         ->ifTrue(function ($s) {
@@ -39,12 +44,16 @@ class Configuration implements ConfigurationInterface
                         ->end()
                 ->end()
 
+                ->scalarNode('delivery_phone')
+                    ->defaultNull()
+                ->end()
+
 	        	->booleanNode('disable_delivery')
                     ->defaultFalse()
                 ->end()
         	->end()
         ;
-        
+
         return $treeBuilder;
     }
 }

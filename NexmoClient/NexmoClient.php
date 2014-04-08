@@ -27,15 +27,22 @@ class NexmoClient {
     protected $api_method;
 
     /**
+     * @var string
+     */
+    protected $delivery_phone;
+
+    /**
      * @param $api_key
      * @param $api_secret
      * @param string $api_method GET|POST configured in Nexmo API preferences
+     * @param $delivery_phone
      */
-    public function __construct($api_key,$api_secret,$api_method='GET') {
+    public function __construct($api_key,$api_secret,$api_method='GET',$delivery_phone) {
         $this->rest_url = 'https://rest.nexmo.com';
         $this->api_key = $api_key;
         $this->api_secret = $api_secret;
         $this->api_method = $api_method;
+        $this->delivery_phone = $delivery_phone;
     }
 
     /**
@@ -93,6 +100,11 @@ class NexmoClient {
      * @throws \Exception
      */
     public function sendTextMessage($fromName,$toNumber,$text,$status_report_req=0) {
+        // delivery phone for development
+        if($this->delivery_phone) {
+            $toNumber = $this->delivery_phone;
+        }
+
         $params = array(
             'from'=>$fromName,
             'to'=>$toNumber,

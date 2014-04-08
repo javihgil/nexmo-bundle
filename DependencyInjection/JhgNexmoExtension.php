@@ -23,7 +23,9 @@ class JhgNexmoExtension extends Extension
 
         $container->setParameter('jhg_nexmo.api_key', $config['api_key']);
         $container->setParameter('jhg_nexmo.api_secret', $config['api_secret']);
+        $container->setParameter('jhg_nexmo.api_method', $config['api_method']);
         $container->setParameter('jhg_nexmo.disable_delivery', $config['disable_delivery']);
+        $container->setParameter('jhg_nexmo.delivery_phone', $config['delivery_phone']);
         $container->setParameter('jhg_nexmo.from_name', $config['from_name']);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
