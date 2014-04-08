@@ -32,17 +32,24 @@ class NexmoClient {
     protected $delivery_phone;
 
     /**
+     * @var boolean
+     */
+    protected $disable_delivery;
+
+    /**
      * @param $api_key
      * @param $api_secret
      * @param string $api_method GET|POST configured in Nexmo API preferences
-     * @param $delivery_phone
+     * @param string $delivery_phone
+     * @param boolean $disable_delivery
      */
-    public function __construct($api_key,$api_secret,$api_method='GET',$delivery_phone) {
+    public function __construct($api_key,$api_secret,$api_method='GET',$delivery_phone,$disable_delivery=false) {
         $this->rest_url = 'https://rest.nexmo.com';
         $this->api_key = $api_key;
         $this->api_secret = $api_secret;
         $this->api_method = $api_method;
         $this->delivery_phone = $delivery_phone;
+        $this->disable_delivery = $disable_delivery;
     }
 
     /**
@@ -111,6 +118,11 @@ class NexmoClient {
             'text'=>$text,
             'status-report-req'=>$status_report_req,
         );
+
+        if($this->disable_delivery) {
+            return null;
+        }
+
         $response = $this->jsonRequest('/sms/json',$params);
 
         if((int)$response['messages'][0]['status']!=0) {
