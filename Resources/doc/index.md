@@ -65,8 +65,8 @@ Usage
 
 ### Send SMS with service
 
-    $sender = $this->getContainer()->get('jhg_nexmo.sms.sender');
-    $sender->send($number,$fromName,$message);
+    $sender = $this->getContainer()->get('jhg_nexmo_sms');
+    $sender->sendText($number, $message, $fromName);
 
 If no $fromName is provided 'jhg_nexmo.from_name' is used. This from name is limited to 11 characters (spaces and special chars are not allowed).
 
