@@ -13,12 +13,12 @@ Add this bundle to your `composer.json` file:
         "repositories": [
             {
                 "type": "vcs",
-                "url": "https://github.com/javihernandezgil/nexmo-bundle.git"
+                "url": "https://github.com/javihgil/nexmo-bundle.git"
             }
         ],
     
         "require": {
-            "javihernandezgil/nexmo-bundle": "dev-master"
+            "javihgil/nexmo-bundle": "dev-master"
         }
     }
     

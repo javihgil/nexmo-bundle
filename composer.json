@@ -1,5 +1,5 @@
 {
-    "name":        "javihernandezgil/nexmo-bundle",
+    "name":        "javihgil/nexmo-bundle",
     "type":        "symfony-bundle",
     "description": "This bundle integrates Nexmo libs",
     "keywords":    ["symfony", "bundle", "nexmo", "sms"],
@@ -8,7 +8,7 @@
     "authors": [
         {
             "name": "Javi Hernández Gil",
-            "homepage": "https://github.com/javihernandezgil/nexmo-bundle"
+            "homepage": "https://github.com/javihgil/nexmo-bundle"
         }
     ],
     
