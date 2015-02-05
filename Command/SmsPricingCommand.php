@@ -31,7 +31,7 @@ class SmsPricingCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output) {
         $country = $input->getArgument('country');
 
-    	$account = $this->getContainer()->get('jhg_nexmo.account');
+    	$account = $this->getContainer()->get('jhg_nexmo_account');
         $price = $account->smsPricing($country);
 
         if($price===false) {
