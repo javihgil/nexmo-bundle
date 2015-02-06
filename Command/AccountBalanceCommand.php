@@ -26,7 +26,7 @@ class AccountBalanceCommand extends ContainerAwareCommand
      * @see Command
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
-    	$account = $this->getContainer()->get('jhg_nexmo.account');
+    	$account = $this->getContainer()->get('jhg_nexmo_account');
         $balance = $account->balance();
         $output->writeln(sprintf('Account balance: %f',$balance));
     }
