@@ -108,6 +108,66 @@ class NexmoClient {
     }
 
     /**
+     * Sends a verifiation PIN using the Two-Factor Authentication API
+     *
+     * @param string $toNumber
+     * @param string $pin
+     * @param int $client_ref
+     * @return array
+     * @throws \Exception
+     */
+    public function send2faMessage($toNumber,$pin,$client_ref=false) {
+        $this->logger->debug("Nexmo send2faMessage to $toNumber with PIN '$pin'");
+
+        // delivery phone for development
+        if($this->delivery_phone) {
+            $toNumber = $this->delivery_phone;
+
+            $this->logger->debug("Nexmo send2faMessage delivery to $toNumber");
+        }
+
+        $params = array(
+            'to'=>$toNumber,
+            'pin'=>$pin,
+        );
+
+        if($client_ref) {
+            $params['client_ref'] = $client_ref;
+        }
+
+        if($this->disable_delivery) {
+            $this->logger->debug("Nexmo send2faMessage delivery disabled by config");
+            return array(
+                "status" => "0",
+                "message-id" => "delivery-disabled",
+                "to" => $toNumber,
+                "client-ref" => 0,
+                "remaining-balance" => 0,
+                "message-price" => 0,
+                "network" => 0,
+            );
+        }
+
+        $response = $this->jsonRequest('sc/us/2fa/json',$params);
+
+        if(0 !==  $code = (int)$response['messages'][0]['status']) {
+            $error = $response['messages'][0]['error-text'];
+            switch( $code) {
+                case 6:
+                    throw new UnroutableSmsMessageException($error, $code);
+
+                case 9:
+                    throw new QuotaExcededException($error, $code);
+
+                default:
+                    throw new NexmoClientException($error, $code);
+            }
+        }
+
+        return $response['messages'][0];
+    }
+
+    /**
      * @param string $fromName
      * @param string $toNumber
      * @param string $text

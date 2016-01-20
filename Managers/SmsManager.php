@@ -45,6 +45,18 @@ class SmsManager
         return SmsSendResponse::createFromResponse($response);
     }
 
+    /**
+     * @param string $number
+     * @param string $pin
+     * @param int $client_ref
+     * @return SmsSendResponse
+     */
+    public function send2fa($number,$pin,$client_ref=false) {
+        $number = PhoneNumber::prefixFilter($number);
+        $response = $this->nexmoClient->send2faMessage($number,$pin,$client_ref);
+        return SmsSendResponse::createFromResponse($response);
+    }
+
     public function sendBinary() {
         throw new \Exception(__METHOD__.' not yet implemented');
     }
