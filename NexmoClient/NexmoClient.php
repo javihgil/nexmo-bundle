@@ -112,10 +112,11 @@ class NexmoClient {
      * @param string $toNumber
      * @param string $text
      * @param int $status_report_req
+     * @param string $type
      * @return array
      * @throws \Exception
      */
-    public function sendTextMessage($fromName,$toNumber,$text,$status_report_req=0) {
+    public function sendTextMessage($fromName,$toNumber,$text,$status_report_req=0,$type='text') {
         $this->logger->debug("Nexmo sendTextMessage from $fromName to $toNumber with text '$text'");
 
         // delivery phone for development
@@ -129,6 +130,7 @@ class NexmoClient {
             'from'=>$fromName,
             'to'=>$toNumber,
             'text'=>$text,
+            'type' => $type,
             'status-report-req'=>$status_report_req,
         );
 

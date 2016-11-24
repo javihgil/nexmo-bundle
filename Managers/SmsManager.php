@@ -36,12 +36,13 @@ class SmsManager
      * @param string $message
      * @param null|string $fromName
      * @param int $status_report_req
+     * @param string $type
      * @return SmsSendResponse
      */
-    public function sendText($number,$message,$fromName=null,$status_report_req=0) {
+    public function sendText($number,$message,$fromName=null,$status_report_req=0,$type='text') {
         $fromName = $fromName!==null ? $fromName : $this->defaultFromName;
         $number = PhoneNumber::prefixFilter($number);
-        $response = $this->nexmoClient->sendTextMessage($fromName,$number,$message,$status_report_req);
+        $response = $this->nexmoClient->sendTextMessage($fromName,$number,$message,$status_report_req,$type);
         return SmsSendResponse::createFromResponse($response);
     }
 
