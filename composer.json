@@ -21,9 +21,8 @@
   },
   "minimum-stability": "stable",
   "autoload": {
-    "psr-0": {
-      "Jhg\\NexmoBundle": ""
+    "psr-4": {
+      "Jhg\\NexmoBundle\\": "src/"
     }
-  },
-  "target-dir": "Jhg/NexmoBundle"
+  }
 }
