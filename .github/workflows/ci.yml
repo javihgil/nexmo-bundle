@@ -89,3 +89,5 @@ test:
 
         -   name: Install composer dependencies
             run: composer update ${{ matrix.config.COMPOSER_FLAGS }} --prefer-dist --no-interaction --no-progress
+
+        -   run: true
