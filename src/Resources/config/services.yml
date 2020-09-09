@@ -18,11 +18,17 @@ services:
     Jhg\NexmoBundle\Command\AccountBalanceCommand:
         arguments:
             $nexmoAccount: '@jhg_nexmo_account'
+        tags:
+            - { name: console.command }
 
     Jhg\NexmoBundle\Command\SmsPricingCommand:
         arguments:
             $nexmoAccount: '@jhg_nexmo_account'
+        tags:
+            - { name: console.command }
 
     Jhg\NexmoBundle\Command\SmsSendCommand:
         arguments:
             $smsManager: '@jhg_nexmo_sms'
+        tags:
+            - { name: console.command }
