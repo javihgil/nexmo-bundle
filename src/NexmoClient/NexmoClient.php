@@ -1,161 +1,134 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Jhg\NexmoBundle\NexmoClient;
 
 use Jhg\NexmoBundle\NexmoClient\Exceptions\NexmoClientException;
 use Jhg\NexmoBundle\NexmoClient\Exceptions\QuotaExcededException;
 use Jhg\NexmoBundle\NexmoClient\Exceptions\UnroutableSmsMessageException;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
-class NexmoClient {
+class NexmoClient
+{
+    private $rest_url;
+    private $api_key;
+    private $api_secret;
+    private $api_method;
+    private $delivery_phone;
+    private $disable_delivery;
+    private $logger;
 
-    /**
-     * @var string
-     */
-    protected $rest_url;
-
-    /**
-     * @var string
-     */
-    protected $api_key;
-
-    /**
-     * @var string
-     */
-    protected $api_secret;
-
-    /**
-     * @var string
-     */
-    protected $api_method;
-
-    /**
-     * @var string
-     */
-    protected $delivery_phone;
-
-    /**
-     * @var boolean
-     */
-    protected $disable_delivery;
-
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
-     * @param $api_key
-     * @param $api_secret
-     * @param string $api_method GET|POST configured in Nexmo API preferences
-     * @param string $delivery_phone
-     * @param boolean $disable_delivery
-     * @param LoggerInterface $logger
-     */
-    public function __construct($api_key,$api_secret,$api_method='GET',$delivery_phone,$disable_delivery=false,LoggerInterface $logger) {
-        $this->rest_url = 'https://rest.nexmo.com';
-        $this->api_key = $api_key;
-        $this->api_secret = $api_secret;
-        $this->api_method = $api_method;
-        $this->delivery_phone = $delivery_phone;
+    public function __construct(string $api_key, string $api_secret, ?string $delivery_phone, string $api_method = 'GET', bool $disable_delivery = false, ?LoggerInterface $logger = null)
+    {
+        $this->rest_url         = 'https://rest.nexmo.com';
+        $this->api_key          = $api_key;
+        $this->api_secret       = $api_secret;
+        $this->api_method       = $api_method;
+        $this->delivery_phone   = $delivery_phone;
         $this->disable_delivery = $disable_delivery;
-        $this->logger = $logger;
+        $this->logger           = $logger ?? new NullLogger();
     }
 
     /**
-     * @param $url
-     * @param array $params
-     * @return array
+     * @param array<mixed> $params
+     *
+     * @return array<mixed>
      */
-    protected function jsonRequest($url,$params=array()) {
-
-        $params['api_key'] = $this->api_key;
+    protected function jsonRequest(string $url, array $params = []): array
+    {
+        $params['api_key']    = $this->api_key;
         $params['api_secret'] = $this->api_secret;
 
-        $request_url = $this->rest_url.'/'.trim($url,'/').'?'.http_build_query($params);
+        $request_url = $this->rest_url.'/'.trim($url, '/').'?'.http_build_query($params);
 
         $request = curl_init($request_url);
-        curl_setopt($request,CURLOPT_RETURNTRANSFER,true );
-        curl_setopt($request,CURLOPT_SSL_VERIFYPEER,false);
-        curl_setopt($request, CURLOPT_HTTPHEADER,array('Accept: application/json'));
+        if($request === false) {
+            throw new \RuntimeException("Can't initialize cURL object.");
+        }
+        curl_setopt($request, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($request, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($request, CURLOPT_HTTPHEADER, ['Accept: application/json']);
 
-        $response = curl_exec($request);
-        $curl_info = curl_getinfo($request);
-        $http_response_code = (int)$curl_info['http_code'];
+        $response           = (string) curl_exec($request);
+        $curl_info          = curl_getinfo($request);
+        $http_response_code = (int) $curl_info['http_code'];
         curl_close($request);
 
-        switch($http_response_code) {
+        switch ($http_response_code) {
             case 200:
-                return json_decode($response,true);
+                return json_decode($response, true);
         }
+
+        return [];
     }
 
-
     /**
+     * @return array<mixed>
      * @example {"autoReload":false,"value":0.2}
-     * @return array
+     *
      */
-    public function accountBalance() {
+    public function accountBalance(): array
+    {
         return $this->jsonRequest('/account/get-balance');
     }
 
-
     /**
-     * @param $country
-     * @return array[country=ES,mt=0.060000,name=Spain,prefix=34]
+     * @return array<mixed>
+     * @example {"country":"ES","mt":0.060000,"name":"Spain","prefix":34}
      */
-    public function accountSmsPrice($country) {
-        return $this->jsonRequest('/account/get-pricing/outbound',array('country'=>$country));
+    public function accountSmsPrice(string $country): array
+    {
+        return $this->jsonRequest('/account/get-pricing/outbound', ['country' => $country]);
     }
 
     /**
-     * @param string $fromName
-     * @param string $toNumber
-     * @param string $text
-     * @param int $status_report_req
-     * @return array
+     * @return array<mixed>
+     *
      * @throws \Exception
      */
-    public function sendTextMessage($fromName,$toNumber,$text,$status_report_req=0) {
+    public function sendTextMessage(string $fromName, string $toNumber, string $text, int $status_report_req = 0): array
+    {
         $this->logger->debug("Nexmo sendTextMessage from $fromName to $toNumber with text '$text'");
 
         // delivery phone for development
-        if($this->delivery_phone) {
+        if ($this->delivery_phone !== null) {
             $toNumber = $this->delivery_phone;
 
             $this->logger->debug("Nexmo sendTextMessage delivery to $toNumber");
         }
 
-        $params = array(
-            'from'=>$fromName,
-            'to'=>$toNumber,
-            'text'=>$text,
-            'status-report-req'=>$status_report_req,
-        );
+        $params = [
+            'from'              => $fromName,
+            'to'                => $toNumber,
+            'text'              => $text,
+            'status-report-req' => $status_report_req,
+        ];
 
-        if($this->disable_delivery) {
-            $this->logger->debug("Nexmo sendTextMessage delivery disabled by config");
-            return array(
-                "status" => "0",
-                "message-id" => "delivery-disabled",
-                "to" => $toNumber,
-                "client-ref" => 0,
-                "remaining-balance" => 0,
-                "message-price" => 0,
-                "network" => 0,
-            );
+        if ($this->disable_delivery) {
+            $this->logger->debug('Nexmo sendTextMessage delivery disabled by config');
+
+            return [
+                'status'            => '0',
+                'message-id'        => 'delivery-disabled',
+                'to'                => $toNumber,
+                'client-ref'        => 0,
+                'remaining-balance' => 0,
+                'message-price'     => 0,
+                'network'           => 0,
+            ];
         }
 
-        $response = $this->jsonRequest('/sms/json',$params);
+        $response = $this->jsonRequest('/sms/json', $params);
 
-        if(0 !==  $code = (int)$response['messages'][0]['status']) {
+        if (0 !== $code = (int) $response['messages'][0]['status']) {
             $error = $response['messages'][0]['error-text'];
-            switch( $code) {
+            switch ($code) {
                 case 6:
                     throw new UnroutableSmsMessageException($error, $code);
-
                 case 9:
                     throw new QuotaExcededException($error, $code);
-
                 default:
                     throw new NexmoClientException($error, $code);
             }

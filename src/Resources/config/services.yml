@@ -1,7 +1,7 @@
 services:
     jhg_nexmo_client:
         class: Jhg\NexmoBundle\NexmoClient\NexmoClient
-        arguments: ['%jhg_nexmo.api_key%', '%jhg_nexmo.api_secret%', '%jhg_nexmo.api_method%', '%jhg_nexmo.delivery_phone%' ,'%jhg_nexmo.disable_delivery%', '@logger']
+        arguments: ['%jhg_nexmo.api_key%', '%jhg_nexmo.api_secret%', '%jhg_nexmo.delivery_phone%', '%jhg_nexmo.api_method%', '%jhg_nexmo.disable_delivery%', '@logger']
 
     jhg_nexmo_account:
         class: Jhg\NexmoBundle\Managers\AccountManager
@@ -14,3 +14,15 @@ services:
     jhg_nexmo_number:
         class: Jhg\NexmoBundle\Managers\NumberManager
         arguments: ['@jhg_nexmo_client']
+
+    Jhg\NexmoBundle\Command\AccountBalanceCommand:
+        arguments:
+            $nexmoAccount: '@jhg_nexmo_account'
+
+    Jhg\NexmoBundle\Command\SmsPricingCommand:
+        arguments:
+            $nexmoAccount: '@jhg_nexmo_account'
+
+    Jhg\NexmoBundle\Command\SmsSendCommand:
+        arguments:
+            $smsManager: '@jhg_nexmo_sms'

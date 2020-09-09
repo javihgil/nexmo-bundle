@@ -1,40 +1,42 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Jhg\NexmoBundle\Managers;
 
 use Jhg\NexmoBundle\NexmoClient\NexmoClient;
 
 /**
  * Class NumberManager
- * @package Jhg\NexmoBundle\Managers
+ *
  * @Author Javi Hernández
  */
 class NumberManager
 {
-    /**
-     * @var \Jhg\NexmoBundle\NexmoClient\NexmoClient
-     */
-    protected $nexmoClient;
+    private $nexmoClient;
 
-    /**
-     * @param NexmoClient $nexmoClient
-     */
-    public function __construct(NexmoClient $nexmoClient) {
+    public function __construct(NexmoClient $nexmoClient)
+    {
         $this->nexmoClient = $nexmoClient;
     }
 
-    public function search() {
+    public function search(): void
+    {
         throw new \Exception(__METHOD__.' not yet implemented');
     }
 
-    public function buy() {
+    public function buy(): void
+    {
         throw new \Exception(__METHOD__.' not yet implemented');
     }
 
-    public function cancel() {
+    public function cancel(): void
+    {
         throw new \Exception(__METHOD__.' not yet implemented');
     }
 
-    public function update() {
+    public function update(): void
+    {
         throw new \Exception(__METHOD__.' not yet implemented');
     }
 }

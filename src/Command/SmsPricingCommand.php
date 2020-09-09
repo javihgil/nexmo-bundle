@@ -1,44 +1,50 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Jhg\NexmoBundle\Command;
 
+use Jhg\NexmoBundle\Managers\AccountManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * @author Javi Hernández
  */
-class SmsPricingCommand extends ContainerAwareCommand
+class SmsPricingCommand extends Command
 {
-    /**
-     * @see Command
-     */
-    protected function configure() {
+    protected static $defaultName = 'nexmo:sms:pricing';
+
+    private $nexmoAccount;
+
+    public function __construct(AccountManager $nexmoAccount)
+    {
+        $this->nexmoAccount = $nexmoAccount;
+
+        parent::__construct();
+    }
+
+    protected function configure(): void
+    {
         $this
-            ->setName('nexmo:sms:pricing')
             ->setDescription('Gets sms price for given country')
-            ->setDefinition(array(
+            ->setDefinition([
                 new InputArgument('country', InputArgument::REQUIRED, 'The country code'),
-            ))
-            ->setHelp("The <info>nexmo:sms:pricing</info> command gets Nexmo API SMS pricing for a given country");
+            ])
+            ->setHelp('The <info>nexmo:sms:pricing</info> command gets Nexmo API SMS pricing for a given country');
     }
 
-    /**
-     * @see Command
-     */
-    protected function execute(InputInterface $input, OutputInterface $output) {
-        $country = $input->getArgument('country');
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        $country = (string) $input->getArgument('country'); // @phpstan-ignore-line
 
-    	$account = $this->getContainer()->get('jhg_nexmo_account');
-        $price = $account->smsPricing($country);
+        $price = $this->nexmoAccount->smsPricing($country);
 
-        if($price===false) {
-            throw new \Exception("Country not valid");
-        } else {
-            $output->writeln(sprintf('SMS sending price for "%s": %f',$country,$price));
-        }
+        $output->writeln(sprintf('SMS sending price for "%s": %f', $country, $price));
+
+        return 0;
     }
-    
 }

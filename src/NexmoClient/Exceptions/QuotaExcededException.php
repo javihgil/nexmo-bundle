@@ -1,11 +1,14 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Jhg\NexmoBundle\NexmoClient\Exceptions;
 
 /**
  * Class QuotaExcededException
- * @package Jhg\NexmoBundle\NexmoClient\Exceptions
+ *
  * @author Javi H. Gil <javihgil@gmail.com>
  */
-class QuotaExcededException extends NexmoClientException {
-
-} 
+class QuotaExcededException extends NexmoClientException
+{
+}
