@@ -19,8 +19,8 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode    = $treeBuilder->root('jhg_nexmo');
+        $treeBuilder = new TreeBuilder('jhg_nexmo');
+        $rootNode    = $treeBuilder->getRootNode();
 
         $rootNode
             ->children()
@@ -39,7 +39,7 @@ class Configuration implements ConfigurationInterface
 
                 ->scalarNode('from_name')
                     ->validate()
-                        ->ifTrue(function ($s) {
+                        ->ifTrue(function ($s): bool {
                             return (strlen($s) > 11 || strlen($s) < 2) && 1 !== preg_match('/^[0-9a-z]{11}$/i', $s);
                         })
                             ->thenInvalid('Invalid from_name, only alphanumeric characters are allowed')
