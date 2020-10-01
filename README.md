@@ -1,3 +1,6 @@
+# This repository is ARCHIVED, and no longer maintained
+
+
 nexmo-bundle
 ============
 Integrates Nexmo libs in Symfony2
