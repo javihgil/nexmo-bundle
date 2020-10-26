@@ -1,0 +1,17 @@
+includes:
+    - vendor/phpstan/phpstan-strict-rules/rules.neon
+    - vendor/phpstan/phpstan-phpunit/extension.neon
+    - vendor/phpstan/phpstan-phpunit/rules.neon
+
+parameters:
+    level: max
+
+    paths:
+        - src
+        - tests
+
+    inferPrivatePropertyTypeFromConstructor: true
+
+    ignoreErrors:
+        - '#Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition::children\(\)#'
+        - '#Method Jhg\\NexmoBundle\\DependencyInjection\\JhgNexmoExtension::load\(\) has parameter \$configs with no value type specified in iterable type array.#'

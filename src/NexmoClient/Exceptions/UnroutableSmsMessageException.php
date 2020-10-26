@@ -1,11 +1,14 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Jhg\NexmoBundle\NexmoClient\Exceptions;
 
 /**
  * Class UnroutableSmsMessageException
- * @package Jhg\NexmoBundle\NexmoClient\Exceptions
+ *
  * @author Javi Hernández
  */
-class UnroutableSmsMessageException extends NexmoClientException {
-
-} 
+class UnroutableSmsMessageException extends NexmoClientException
+{
+}

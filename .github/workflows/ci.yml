@@ -1,0 +1,93 @@
+name: CI
+
+on:
+    push:
+        branches:
+            - master
+
+    pull_request:
+        types: [opened, synchronize, reopened, ready_for_review]
+
+env:
+    PHPUNIT_FLAGS: -v
+    COMPOSER_MEMORY_LIMIT: -1
+
+    PHP_VERSION_DEFAULT: 7.3
+    NODE_VERSION: 10.x
+
+jobs:
+    static_analysis:
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v2
+
+            -   name: Install PHP
+                uses: shivammathur/setup-php@v1
+                with:
+                    php-version: ${{ env.PHP_VERSION_DEFAULT }}
+                    ini-values: memory_limit=-1, session.gc_probability=0, opcache.enable=1, opcache.enable_cli=1, opcache.memory_consumption=256, opcache.max_accelerated_files=20000, opcache.validate_timestamps=0, realpath_cache_size=4096K, realpath_cache_ttl=600
+
+            -   name: Install Node.js
+                uses: actions/setup-node@v1
+                with:
+                    node-version: ${{ env.NODE_VERSION }}
+
+            -   run: composer install --prefer-dist --no-interaction --no-progress
+
+            -   run: composer validate --strict
+
+            -   run: composer phpstan
+
+            -   run: composer php-cs-fixer@ci
+test:
+    runs-on: ubuntu-latest
+    strategy:
+        fail-fast: false
+        matrix:
+            config:
+                # Minimum supported dependencies with the latest and oldest PHP version
+                -   PHP_VERSION: 7.3
+                    COMPOSER_FLAGS: --prefer-stable --prefer-lowest
+
+                # Test the latest stable release
+                -   PHP_VERSION: 7.3
+                -   PHP_VERSION: 7.4
+                    COVERAGE: true
+                    PHPUNIT_FLAGS: -v --coverage-text
+
+                # Test specific Symfony versions
+                -   PHP_VERSION: 7.4
+                    SYMFONY_VERSION: 4.4.* # Last 4.x version
+                -   PHP_VERSION: 7.4
+                    SYMFONY_VERSION: 5.0.* # Last 5.x version
+
+                # Latest commit to master (disabled until GitHub Actions support allowed_failures)
+                # - PHP_VERSION: 7.4
+                #   STABILITY: dev
+                #   ALLOWED_TO_FAIL: true
+
+    steps:
+        -   uses: actions/checkout@v2
+
+        -   name: Install PHP
+            uses: shivammathur/setup-php@v1
+            with:
+                php-version: ${{ matrix.config.PHP_VERSION }}
+                coverage: ${{ matrix.config.COVERAGE }}
+                ini-values: memory_limit=-1, session.gc_probability=0, opcache.enable=1, opcache.enable_cli=1, opcache.memory_consumption=256, opcache.max_accelerated_files=20000, opcache.validate_timestamps=0, realpath_cache_size=4096K, realpath_cache_ttl=600
+
+        -   name: Install globally Symfony Flex
+            run: composer global require --no-progress --no-scripts --no-plugins symfony/flex dev-master
+
+        -   name: Configure Composer minimum stability
+            if: matrix.config.STABILITY
+            run: composer config minimum-stability ${{ matrix.config.STABILITY }}
+
+        -   name: Limit to specific Symfony version
+            if: matrix.config.SYMFONY_VERSION
+            run: echo "::set-env name=SYMFONY_REQUIRE::${{ matrix.config.SYMFONY_VERSION }}"
+
+        -   name: Install composer dependencies
+            run: composer update ${{ matrix.config.COMPOSER_FLAGS }} --prefer-dist --no-interaction --no-progress
+
+        -   run: true

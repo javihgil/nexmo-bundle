@@ -1,87 +1,94 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Jhg\NexmoBundle\Managers;
 
 use Jhg\NexmoBundle\NexmoClient\NexmoClient;
 
 /**
  * Class AccountManager
- * @package Jhg\NexmoBundle\Managers
+ *
  * @Author Javi Hernández
  */
 class AccountManager
 {
-    /**
-     * @var \Jhg\NexmoBundle\NexmoClient\NexmoClient
-     */
-    protected $nexmoClient;
+    private $nexmoClient;
 
-    /**
-     * @param NexmoClient $nexmoClient
-     */
-    public function __construct(NexmoClient $nexmoClient) {
+    public function __construct(NexmoClient $nexmoClient)
+    {
         $this->nexmoClient = $nexmoClient;
     }
 
-    /**
-     * @return bool|float - account balance | false on fail
-     */
-    public function balance() {
+    public function balance(): float
+    {
         $response = $this->nexmoClient->accountBalance();
+
         return floatval($response['value']);
     }
 
-    /**
-     * @param $country
-     * @return bool|float - sms pricing | false on fail
-     */
-    public function smsPricing($country) {
+    public function smsPricing(string $country): float
+    {
         $response = $this->nexmoClient->accountSmsPrice($country);
+
         return floatval($response['mt']);
     }
 
-
     /**
      * @todo Implement getCountryDialingCode method
-     * @param $country_code
+     *
+     * @param string $country_code
+     *
      * @throws \Exception
      */
-    public function getCountryDialingCode ($country_code) {
+    public function getCountryDialingCode($country_code): void
+    {
         throw new \Exception(__METHOD__.' not yet implemented');
     }
 
     /**
      * @todo Implement numbersList method
+     *
      * @throws \Exception
      */
-    public function numbersList () {
+    public function numbersList(): void
+    {
         throw new \Exception(__METHOD__.' not yet implemented');
     }
 
     /**
      * @todo Implement numbersSearch method
-     * @param $country_code
-     * @param $pattern
+     *
+     * @param string $country_code
+     * @param string $pattern
+     *
      * @throws \Exception
      */
-    public function numbersSearch ($country_code, $pattern) {
+    public function numbersSearch($country_code, $pattern): void
+    {
         throw new \Exception(__METHOD__.' not yet implemented');
     }
 
     /**
      * @todo Implement numbersBuy method
-     * @param $country_code
-     * @param $msisdn
+     *
+     * @param string $country_code
+     * @param string $msisdn
+     *
      * @throws \Exception
      */
-    public function numbersBuy ($country_code, $msisdn) {
+    public function numbersBuy($country_code, $msisdn): void
+    {
         throw new \Exception(__METHOD__.' not yet implemented');
     }
 
     /**
      * @todo Implement numbersCancel method
+     *
      * @throws \Exception
      */
-    public function numbersCancel() {
+    public function numbersCancel(): void
+    {
         throw new \Exception(__METHOD__.' not yet implemented');
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Jhg\NexmoBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
@@ -13,32 +15,32 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 class Configuration implements ConfigurationInterface
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('jhg_nexmo');
+        $treeBuilder = new TreeBuilder('jhg_nexmo');
+        $rootNode    = $treeBuilder->getRootNode();
 
         $rootNode
-        	->children()
-	        	->scalarNode('api_key')
+            ->children()
+                ->scalarNode('api_key')
                     ->isRequired()
                 ->end()
 
-	        	->scalarNode('api_secret')
+                ->scalarNode('api_secret')
                     ->isRequired()
                 ->end()
 
                 ->enumNode('api_method')
                     ->defaultValue('GET')
-                    ->values(array('GET','POST'))
+                    ->values(['GET', 'POST'])
                 ->end()
 
-	        	->scalarNode('from_name')
+                ->scalarNode('from_name')
                     ->validate()
-                        ->ifTrue(function ($s) {
-                            return (strlen($s)>11 || strlen($s)<2) && preg_match('/^[0-9a-z]{11}$/i', $s) !== 1;
+                        ->ifTrue(function ($s): bool {
+                            return (strlen($s) > 11 || strlen($s) < 2) && 1 !== preg_match('/^[0-9a-z]{11}$/i', $s);
                         })
                             ->thenInvalid('Invalid from_name, only alphanumeric characters are allowed')
                         ->end()
@@ -48,10 +50,10 @@ class Configuration implements ConfigurationInterface
                     ->defaultNull()
                 ->end()
 
-	        	->booleanNode('disable_delivery')
+                ->booleanNode('disable_delivery')
                     ->defaultFalse()
                 ->end()
-        	->end()
+            ->end()
         ;
 
         return $treeBuilder;

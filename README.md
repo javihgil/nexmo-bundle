@@ -3,7 +3,7 @@
 
 nexmo-bundle
 ============
-Integrates Nexmo libs in Symfony2
+Integrates Nexmo libs in Symfony 4 and 5
 
 
 Documentation

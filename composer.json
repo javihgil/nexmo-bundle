@@ -1,29 +1,41 @@
 {
-    "name":        "javihgil/nexmo-bundle",
-    "type":        "symfony-bundle",
-    "description": "This bundle integrates Nexmo libs",
-    "keywords":    ["symfony", "bundle", "nexmo", "sms"],
-    "license":     "MIT",
-
-    "authors": [
-        {
-            "name": "Javi Hernández Gil",
-            "homepage": "https://github.com/javihgil/nexmo-bundle"
-        }
-    ],
-    
-    "require": {
-        "php":                      ">=5.3.2",
-        "symfony/framework-bundle": ">=2.2.0"
-    },
-
-    "minimum-stability": "stable",
-
-    "autoload": {
-        "psr-0": {
-            "Jhg\\NexmoBundle": ""
-        }
-    },
-    
-    "target-dir": "Jhg/NexmoBundle"
+  "name": "javihgil/nexmo-bundle",
+  "type": "symfony-bundle",
+  "description": "This bundle integrates Nexmo libs",
+  "keywords": [
+    "symfony",
+    "bundle",
+    "nexmo",
+    "sms"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Javi Hernández Gil",
+      "homepage": "https://github.com/javihgil/nexmo-bundle"
+    }
+  ],
+  "scripts": {
+    "phpstan": "phpstan analyze --ansi",
+    "php-cs-fixer": "php-cs-fixer fix -v",
+    "php-cs-fixer@ci": "php-cs-fixer fix -v --diff --dry-run",
+    "phpunit": "phpunit"
+  },
+  "minimum-stability": "stable",
+  "require": {
+    "php": "^7.3",
+    "ext-curl": "*",
+    "ext-json": "*",
+    "symfony/framework-bundle": "^4.4 || ^5.0"
+  },
+  "require-dev": {
+    "phpstan/phpstan-phpunit": "^0.12.16",
+    "friendsofphp/php-cs-fixer": "^2.16",
+    "phpstan/phpstan-strict-rules": "^0.12.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "Jhg\\NexmoBundle\\": "src/"
+    }
+  }
 }
